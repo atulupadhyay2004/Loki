@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+  namespace: demo-apps
+  labels:
+    app: nodejs-app
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+        tier: backend
+    spec:
+      containers:
+        - name: nodejs-app
+          image: node:18-alpine
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "{\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"level\":\"info\",\"app\":\"nodejs-app\",\"message\":\"Processing request\",\"requestId\":\"$(cat /proc/sys/kernel/random/uuid 2>/dev/null || echo random-$(date +%s))\"}"
+                echo "{\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"level\":\"info\",\"app\":\"nodejs-app\",\"message\":\"Request completed\",\"duration\":\"${RANDOM}ms\"}"
+                sleep 2
+                if [ $((RANDOM % 10)) -eq 0 ]; then
+                  echo "{\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"level\":\"error\",\"app\":\"nodejs-app\",\"message\":\"Database connection failed\",\"error\":\"timeout\"}"
+                fi
+              done
+          resources:
+            requests:
+              cpu: "25m"
+              memory: "32Mi"
+            limits:
+              cpu: "50m"
+              memory: "64Mi"
