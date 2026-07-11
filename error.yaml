@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: error-generator
+  namespace: demo-apps
+  labels:
+    app: error-generator
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: error-generator
+  template:
+    metadata:
+      labels:
+        app: error-generator
+        tier: backend
+    spec:
+      containers:
+        - name: error-generator
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "INFO: Application starting up"
+                sleep 1
+                echo "INFO: Connected to database"
+                sleep 2
+                echo "WARNING: High memory usage detected 85%"
+                sleep 1
+                echo "ERROR: Failed to process request - timeout after 30s"
+                sleep 1
+                echo "CRITICAL: Service unavailable - retrying in 5s"
+                sleep 3
+                echo "INFO: Service recovered successfully"
+                sleep 5
+              done
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "16Mi"
+            limits:
+              cpu: "25m"
+              memory: "32Mi"
