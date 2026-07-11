@@ -1,0 +1,42 @@
+loki:
+  enabled: true
+  isDefault: true
+  persistence:
+    enabled: false
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+promtail:
+  enabled: true
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
+
+grafana:
+  enabled: true
+  adminPassword: admin123
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  sidecar:
+    datasources:
+      enabled: true
+
+prometheus:
+  enabled: false
+
+fluent-bit:
+  enabled: false
